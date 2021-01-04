@@ -2,26 +2,23 @@ import 'dart:async';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 
-int level = 8;
+List<GlobalKey<FlipCardState>> cardStateKeys = [];
+List<bool> cardFlips = [];
+List<String> data = [];
+int previousIndex = -1;
+bool flip = false;
+int time = 0;
+Timer timer;
 
 class Home extends StatefulWidget {
   final int size;
 
-  const Home({this.size = 8});
+  const Home({this.size = 12});
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  List<GlobalKey<FlipCardState>> cardStateKeys = [];
-  List<bool> cardFlips = [];
-  List<String> data = [];
-  int previousIndex = -1;
-  bool flip = false;
-
-  int time = 0;
-  Timer timer;
-
   @override
   void initState() {
     super.initState();
@@ -35,11 +32,11 @@ class _HomeState extends State<Home> {
     for (var i = 0; i < widget.size ~/ 2; i++) {
       data.add(i.toString());
     }
-    startTimer();
+    Timing();
     data.shuffle();
   }
 
-  startTimer() {
+  Timing() {
     timer = Timer.periodic(Duration(seconds: 1), (t) {
       setState(() {
         time = time + 1;
@@ -58,11 +55,11 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(16.0),
                 child: Text(
                   "$time",
-                  style: Theme.of(context).textTheme.display2,
+                  style: Theme.of(context).textTheme.headline4,
                 ),
               ),
               Theme(
-                data: ThemeData.dark(),
+                data: ThemeData.dark().copyWith(),
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: GridView.builder(
@@ -91,26 +88,26 @@ class _HomeState extends State<Home> {
                               print(cardFlips);
 
                               if (cardFlips.every((t) => t == false)) {
-                                print("Won");
-                                showResult();
+                                print("Congratulations!!!!! You Won");
+                                modalResult();
                               }
                             }
                           }
                         }
                       },
-                      direction: FlipDirection.HORIZONTAL,
+                      direction: FlipDirection.VERTICAL,
                       flipOnTouch: cardFlips[index],
                       front: Container(
                         margin: EdgeInsets.all(4.0),
-                        color: Colors.deepOrange.withOpacity(0.3),
+                        color: Colors.white30.withOpacity(0.3),
                       ),
                       back: Container(
                         margin: EdgeInsets.all(4.0),
-                        color: Colors.deepOrange,
+                        color: Colors.yellow,
                         child: Center(
                           child: Text(
                             "${data[index]}",
-                            style: Theme.of(context).textTheme.display2,
+                            style: Theme.of(context).textTheme.headline2,
                           ),
                         ),
                       ),
@@ -126,29 +123,26 @@ class _HomeState extends State<Home> {
     );
   }
 
-  showResult() {
+  modalResult() {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text("Won!!!"),
+        title: Text("Winner Winner...Chicken Dinner!!!"),
         content: Text(
           "Time $time",
-          style: Theme.of(context).textTheme.display2,
+          style: Theme.of(context).textTheme.bodyText2,
         ),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => Home(
-                    size: level,
-                  ),
+                  builder: (context) => Home(),
                 ),
               );
-              level *= 2;
             },
-            child: Text("NEXT"),
+            child: Text("play again"),
           ),
         ],
       ),

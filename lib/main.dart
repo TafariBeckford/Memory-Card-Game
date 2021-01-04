@@ -10,6 +10,7 @@ class CardApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Memory Card Game',
+      theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       home: Home(),
     );
